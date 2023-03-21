@@ -1,14 +1,35 @@
-<h2>Por Pais</h2>
-<hr>
-<div class="row">
-    <div class="col">
-        <form autocomplete="off" (ngSubmit)="buscar()">
-            <input type="text" name="termino" placeholder="Buscar país..." class="form-control" [(ngModel)]="termino">
-        </form>
+<div class="animate__animated animate__fadeIn animate__faster">
+    <h2>Por Pais</h2>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <app-pais-input 
+                (onEnter)="buscar($event)" 
+                (onDebounce)="sugerencias($event)"
+                placeholder="Buscar país..."
+                ></app-pais-input>
+        </div>
     </div>
+    <ul class="list-group" *ngIf="mostrarSugerencia">
+        <li 
+            class="list-group-item list-group-item-action"
+            *ngFor="let pais of paisesSugeridos">
+            <a  class="nav-link"
+                [routerLink] = "['/pais', pais.cca3]">
+                {{pais.name.common}}
+            </a>
+        </li>
+        <li 
+            class="list-group-item list-group-item-action"
+            (click)="buscar(termino)">
+            <a class="nav-link">
+                Buscar "{{ termino }}"
+            </a>
+        </li>
+    </ul>
+    
+    <hr>
 </div>
-
-<hr>
 
 <div class="alert alert-danger" *ngIf="hayError">
     No se encontro nada con el término {{ termino }}.
@@ -16,28 +37,6 @@
 
 <div *ngIf="paises.length > 0" class="row">
     <div class="col">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Bandera</th>
-                    <th>Nombre</th>
-                    <th>Poblacion</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let pais of paises; let i = index">
-                    <td>{{ i + 1}}</td>
-                    <td>
-                        <img [src]="pais.flags.png" alt="pais">
-                    </td>
-                    <td>{{ pais.name.common }}</td>
-                    <td>{{ pais.population | number }}</td>
-                    <td>
-                        <a [routerLink]="['pais', pais.cca3]">Ver...</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <app-pais-tabla [paises]="paises"></app-pais-tabla>
     </div>
 </div>
